@@ -7,7 +7,7 @@ import requests
 from dotenv import load
 import time
 import random
-from babel.numbers import format_currency, format_number
+from babel.numbers import format_currency
 from babel import Locale
 
 
@@ -19,7 +19,7 @@ if not api_token:
     raise ValueError("API Tidak ditemukan. Please cek .env anda.")
 
 print(pyfiglet.figlet_format("Welcome !",font="larry3d", width=300))
-# print(pyfiglet.figlet_format("Kelompok 4",font="larry3d", width=300))
+print(pyfiglet.figlet_format("Kelompok 4",font="larry3d", width=300))
 indonesian_locale = Locale('id', 'ID')
 
 url = "https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1"
@@ -31,7 +31,7 @@ headers = {
 
 response = requests.get(url, headers=headers)
 
-# Simulate loading animation
+# Simulasi loading animation
 print("Fetching Data Film ", end="")
 for i in range(10):
     time.sleep(0.1)  # Sleep for 0.1 seconds
@@ -41,7 +41,7 @@ for i in range(10):
         print("⌛️", end="", flush=True)
 
 
-print("\n")  # Move to the next line after the loading animation
+print("\n")  # Pindah ke new line setelah loading selesai
 
 if response.status_code == 200:
     apijson = response.json()
@@ -155,17 +155,32 @@ if response.status_code == 200:
             user_continue = str(input("Apakah anda ingin membeli tiket yang lain? (y/n) (default=no) : ")).lower()
             if user_continue.casefold() in options:
                 continue
-            last_row_total = {
+            row_total = {
                 "Tiket Film yang dipesan 🍿": "",
                 "Menonton di IMAX 🎥": "",
                 "Hari 📆":"",
                 "Pukul 🕘":"Total Harga Tiket w/ pajak :",
                 "Harga 💲":format_currency(total_price_with_tax,"IDR",locale="id_ID")
             }
-            user_tickets.append(last_row_total)
-            user_ticket_table = tb(user_tickets, headers="keys", tablefmt="fancy_grid", numalign="center", stralign="center")
-            print(user_ticket_table)
-            print("✨ Terimakasih telah menggunakan program kami ✨")
+            user_pay = int(input("Masukkan uang anda 💳 : "))
+            if(user_pay >= total_price_with_tax):
+                row_change = {
+                    "Tiket Film yang dipesan 🍿": "",
+                    "Menonton di IMAX 🎥": "",
+                    "Hari 📆":"",
+                    "Pukul 🕘":"Kembalian Anda :",
+                    "Harga 💲":format_currency(user_pay-total_price_with_tax,"IDR",locale="id_ID")
+                }
+                user_tickets.append(row_total)
+                user_tickets.append(row_change)
+                user_ticket_table = tb(user_tickets, headers="keys", tablefmt="fancy_grid", numalign="center", stralign="center")
+                print(user_ticket_table)
+                csv_file_path = "user_tickets.csv"
+                pd.DataFrame(user_tickets).to_csv(csv_file_path, index=False)
+                print(f"Tiket anda telah disimpan di file 📂 : {csv_file_path}")
+                print("✨ Terimakasih telah menggunakan program kami ✨")
+            else:
+                print("Uang kamu tidak cukup")
             break
 else:
     print(f"Fetch Api Gagal!. Status code: {response.status_code}")
