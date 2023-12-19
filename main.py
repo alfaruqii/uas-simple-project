@@ -162,6 +162,7 @@ if response.status_code == 200:
                 "Pukul 🕘":"Total Harga Tiket w/ pajak :",
                 "Harga 💲":format_currency(total_price_with_tax,"IDR",locale="id_ID")
             }
+            print(f"Harga tiket anda adalah {row_total["Harga 💲"]}")
             user_pay = int(input("Masukkan uang anda 💳 : "))
             if(user_pay >= total_price_with_tax):
                 row_change = {
