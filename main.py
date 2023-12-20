@@ -4,14 +4,14 @@ from datetime import datetime
 from tabulate import tabulate as tb
 import pyfiglet
 import requests
-from dotenv import load
+from dotenv import load_dotenv
 import time
 import random
 from babel.numbers import format_currency
 from babel import Locale
 
 
-load()
+load_dotenv()
 api_token = os.getenv("MOVIE_API_TOKEN")
 os.system("clear||cls")
 
@@ -149,7 +149,7 @@ if response.status_code == 200:
                 "Menonton di IMAX 🎥": "✅" if user_input_watch_in in options else "❌",
                 "Hari 📆":userinput_ticket_day.capitalize(),
                 "Pukul 🕘":df.loc[userinput_ticket_film]["Pukul 🕘"],
-                "Harga 💲":formatted_price
+                "Harga 💵":formatted_price
             }
             user_tickets.append(user_movie_option)
             user_continue = str(input("Apakah anda ingin membeli tiket yang lain? (y/n) (default=no) : ")).lower()
@@ -160,9 +160,9 @@ if response.status_code == 200:
                 "Menonton di IMAX 🎥": "",
                 "Hari 📆":"",
                 "Pukul 🕘":"Total Harga Tiket w/ pajak :",
-                "Harga 💲":format_currency(total_price_with_tax,"IDR",locale="id_ID")
+                "Harga 💵":format_currency(total_price_with_tax,"IDR",locale="id_ID")
             }
-            print(f"Harga tiket anda adalah {row_total["Harga 💲"]}")
+            print(f"Harga tiket anda adalah {row_total['Harga 💵']}")
             user_pay = int(input("Masukkan uang anda 💳 : "))
             if(user_pay >= total_price_with_tax):
                 row_change = {
@@ -170,7 +170,7 @@ if response.status_code == 200:
                     "Menonton di IMAX 🎥": "",
                     "Hari 📆":"",
                     "Pukul 🕘":"Kembalian Anda :",
-                    "Harga 💲":format_currency(user_pay-total_price_with_tax,"IDR",locale="id_ID")
+                    "Harga 💵":format_currency(user_pay-total_price_with_tax,"IDR",locale="id_ID")
                 }
                 user_tickets.append(row_total)
                 user_tickets.append(row_change)
